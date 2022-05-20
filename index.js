@@ -114,4 +114,24 @@ let mockupsToDef = (() => {
     }
     return convert;
 })();
-require("fs").writeFileSync(__dirname + "/output.txt", mockupsToDef(process.argv.slice(3).join(" "), process[2], true), "utf-8");
+const childProcess = require("child_process");
+const fs = require("fs");
+const input = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+const prompt = () => {
+    input.question("", string => {
+        try {
+            let argv = string.split(" ");
+            console.log("Attempting to convert...");
+            fs.writeFileSync(__dirname + "/output.txt", mockupsToDef(argv.slice(1).join(" "), process[0], true), "utf-8");
+            console.log("Correctly converted, check output.txt");
+        } catch (e) {
+            console.error(e.stack);
+        } finally {
+            setTimeout(prompt, 0);
+        }
+    });
+};
+setTimeout(prompt, 200);
